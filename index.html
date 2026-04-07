@@ -665,7 +665,7 @@
   async function gql(query, variables = {}) {
     const c = cfg();
     if (!c.apiKey) throw new Error('No API key configured. Tap ⚙ Settings.');
-    const res = await fetch(`https://api.runpod.io/graphql?api_key=${c.apiKey}`, {
+    const res = await fetch(`https://runpod-proxy.jrm-rdn-anon.workers.dev?api_key=${c.apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query, variables }),
