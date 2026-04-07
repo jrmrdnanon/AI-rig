@@ -492,6 +492,14 @@
         <label>Network Volume ID</label>
         <input type="text" id="cfgVolumeId" placeholder="vol_xxxxxxxx" />
       </div>
+      <div class="field">
+        <label>SillyTavern Username</label>
+        <input type="text" id="cfgStUser" placeholder="username" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label>SillyTavern Password</label>
+        <input type="password" id="cfgStPass" placeholder="password" autocomplete="off" />
+      </div>
     </div>
     <button class="btn-save" onclick="saveConfig()">Save Configuration</button>
   </div>
@@ -596,6 +604,8 @@
       apiKey:     localStorage.getItem('rp_apiKey')     || DEFAULT_API_KEY,
       templateId: localStorage.getItem('rp_templateId') || DEFAULT_TEMPLATE_ID,
       volumeId:   localStorage.getItem('rp_volumeId')   || DEFAULT_VOLUME_ID,
+      stUser:     localStorage.getItem('rp_stUser')     || '',
+      stPass:     localStorage.getItem('rp_stPass')     || '',
     };
   }
 
@@ -603,6 +613,8 @@
     localStorage.setItem('rp_apiKey',     document.getElementById('cfgApiKey').value.trim());
     localStorage.setItem('rp_templateId', document.getElementById('cfgTemplateId').value.trim());
     localStorage.setItem('rp_volumeId',   document.getElementById('cfgVolumeId').value.trim());
+    localStorage.setItem('rp_stUser',     document.getElementById('cfgStUser').value.trim());
+    localStorage.setItem('rp_stPass',     document.getElementById('cfgStPass').value);
     log('Configuration saved.', 'success');
     toggleConfig();
   }
@@ -612,6 +624,8 @@
     document.getElementById('cfgApiKey').value     = c.apiKey;
     document.getElementById('cfgTemplateId').value = c.templateId;
     document.getElementById('cfgVolumeId').value   = c.volumeId;
+    document.getElementById('cfgStUser').value     = c.stUser;
+    document.getElementById('cfgStPass').value     = c.stPass;
   }
 
   // ── UI HELPERS ─────────────────────────────────────────────────────────────
@@ -778,7 +792,12 @@
   // ── OPEN SERVICES ─────────────────────────────────────────────────────────
   function openSillyTavern() {
     if (!state.podId) return;
-    window.open(proxyUrl(state.podId, ST_PORT), '_blank');
+    const c = cfg();
+    const base = proxyUrl(state.podId, ST_PORT);
+    const url = (c.stUser && c.stPass)
+      ? base.replace('https://', `https://${encodeURIComponent(c.stUser)}:${encodeURIComponent(c.stPass)}@`)
+      : base;
+    window.open(url, '_blank');
   }
 
   function openForge() {
